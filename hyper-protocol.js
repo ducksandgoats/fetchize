@@ -1,4 +1,5 @@
 export default async function makeHyperFetch (opts = {}) {
+    const __dirname = import.meta.dirname
     const {default: mime} = await import('mime')
     const {default: parseRange} = await import('range-parser')
     const { Readable, pipelinePromise } = await import('streamx')
@@ -8,7 +9,7 @@ export default async function makeHyperFetch (opts = {}) {
     const DEFAULT_OPTS = {timeout: 30000}
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
     const block = finalOpts.block
-    const storage = finalOpts.storage
+    const storage = finalOpts.storage || path.join(__dirname, 'hyper')
     const hyperTimeout = finalOpts.timeout
     const hostType = '_'
     const mainHeaders = {

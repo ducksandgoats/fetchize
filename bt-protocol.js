@@ -1,4 +1,5 @@
 export default async function makeBTFetch (opts = {}) {
+    const __dirname = import.meta.dirname
     const {default: mime} = await import('mime')
     const {default: parseRange} = await import('range-parser')
     const path = await import('path')
@@ -13,7 +14,7 @@ export default async function makeBTFetch (opts = {}) {
     const hostTypeHash = '.'
     const btTimeout = finalOpts.timeout
     const block = finalOpts.block
-    const dir = finalOpts.dir
+    const dir = finalOpts.dir || path.join(__dirname, 'bt')
     const mainHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Allow-CSP-From': '*',

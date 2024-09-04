@@ -1,4 +1,5 @@
 export default async function makeIPFSFetch (opts = {}) {
+    const __dirname = import.meta.dirname
     const { CID } = await import('multiformats/cid')
     const { kadDHT } = await import('@libp2p/kad-dht')
     const { gossipsub } = await import('@chainsafe/libp2p-gossipsub')
@@ -12,7 +13,7 @@ export default async function makeIPFSFetch (opts = {}) {
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
     const block = finalOpts.block
     const hostType = '.'
-    const repo = finalOpts.repo
+    const repo = finalOpts.repo || path.join(__dirname, 'ipfs')
     const ipfsTimeout = finalOpts.timeout
     const mainHeaders = {
       'Access-Control-Allow-Origin': '*',
