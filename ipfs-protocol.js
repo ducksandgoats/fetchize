@@ -13,7 +13,8 @@ export default async function makeIPFSFetch (opts = {}) {
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
     const block = finalOpts.block
     const hostType = '.'
-    const repo = finalOpts.repo || path.join(__dirname, 'ipfs')
+    finalOpts.repo = finalOpts.repo || path.join(__dirname, 'ipfs')
+    const repo = finalOpts.repo
     const ipfsTimeout = finalOpts.timeout
     const mainHeaders = {
       'Access-Control-Allow-Origin': '*',

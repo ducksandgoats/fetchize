@@ -14,7 +14,8 @@ export default async function makeBTFetch (opts = {}) {
     const hostTypeHash = '.'
     const btTimeout = finalOpts.timeout
     const block = finalOpts.block
-    const dir = finalOpts.dir || path.join(__dirname, 'bt')
+    finalOpts.dir = finalOpts.dir || path.join(__dirname, 'bt')
+    const dir = finalOpts.dir
     const mainHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Allow-CSP-From': '*',
