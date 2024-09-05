@@ -11,8 +11,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@chainsafe/libp2p-gossipsub": "^13.2.0",
     "@derhuerst/gemini": "^2.0.0",
     "@helia/unixfs": "^3.0.7",
+    "@libp2p/identify": "^2.1.5",
+    "@libp2p/kad-dht": "^12.1.5",
     "blockstore-fs": "^2.0.0",
     "datastore-fs": "^10.0.0",
     "detect-port": "^1.6.1",
