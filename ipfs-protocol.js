@@ -3,6 +3,7 @@ export default async function makeIPFSFetch (opts = {}) {
     const { CID } = await import('multiformats/cid')
     const { kadDHT } = await import('@libp2p/kad-dht')
     const { gossipsub } = await import('@chainsafe/libp2p-gossipsub')
+    const {identify} = await import('@libp2p/identify')
     const {default: parseRange} = await import('range-parser')
     const {default: mime} = await import('mime')
     const { Readable } = await import('streamx')
@@ -24,7 +25,7 @@ export default async function makeIPFSFetch (opts = {}) {
       'Access-Control-Request-Headers': '*'
     }
     
-    const app = await (async () => { if (finalOpts.helia) { return finalOpts.helia; } else {const {createHelia} = await import('helia');const {FsDatastore} = await import('datastore-fs');const {FsBlockstore} = await import('blockstore-fs');return await createHelia({blockstore: new FsBlockstore(repo), datastore: new FsDatastore(repo), libp2p: {services: {dht: kadDHT(), pubsub: gossipsub()}}});} })()
+    const app = await (async () => { if (finalOpts.helia) { return finalOpts.helia; } else {const {createHelia} = await import('helia');const {FsDatastore} = await import('datastore-fs');const {FsBlockstore} = await import('blockstore-fs');return await createHelia({blockstore: new FsBlockstore(repo), datastore: new FsDatastore(repo), libp2p: {services: {dht: kadDHT(), pubsub: gossipsub(), identify: identify()}}});} })()
     // console.log(Object.keys(app), app)
     const fileSystem = await (async () => {const {unixfs} = await import('@helia/unixfs');return unixfs(app);})()
     if(!await fs.pathExists(repo)){
