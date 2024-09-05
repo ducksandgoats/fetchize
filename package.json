@@ -1,6 +1,6 @@
 {
   "name": "fetchize",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,7 +13,6 @@
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.2.0",
     "@derhuerst/gemini": "^2.0.0",
-    "@libp2p/circuit-relay-v2": "^1.1.5",
     "@libp2p/identify": "^2.1.5",
     "@libp2p/kad-dht": "^12.1.5",
     "blockstore-fs": "^2.0.0",
