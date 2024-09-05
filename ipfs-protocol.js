@@ -7,7 +7,7 @@ export default async function makeIPFSFetch (opts = {}) {
     const {default: mime} = await import('mime')
     const { Readable } = await import('streamx')
     const path = await import('path')
-    // const fs = await import('fs/promises')
+    const fsp = await import('fs/promises')
     const fs = await import('fs-extra')
     const DEFAULT_OPTS = {timeout: 30000}
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
@@ -31,7 +31,7 @@ export default async function makeIPFSFetch (opts = {}) {
       await fs.ensureDir(repo)
     }
     if(!await fs.pathExists(path.join(repo, 'block.txt'))){
-      await fs.writeFile(path.join(repo, 'block.txt'), JSON.stringify([]))
+      await fsp.writeFile(path.join(repo, 'block.txt'), JSON.stringify([]))
     }
     const blockList = block ? JSON.parse((await fs.readFile(path.join(repo, 'block.txt'))).toString('utf-8')) : null
   

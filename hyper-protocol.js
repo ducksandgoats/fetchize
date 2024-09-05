@@ -3,7 +3,7 @@ export default async function makeHyperFetch (opts = {}) {
     const {default: mime} = await import('mime')
     const {default: parseRange} = await import('range-parser')
     const { Readable, pipelinePromise } = await import('streamx')
-    // const fs = await import('fs/promises')
+    const fsp = await import('fs/promises')
     const fs = await import('fs-extra')
     const path = await import('path')
     const DEFAULT_OPTS = {timeout: 30000}
@@ -26,7 +26,7 @@ export default async function makeHyperFetch (opts = {}) {
       await fs.ensureDir(storage)
     }
     if(!await fs.pathExists(path.join(storage, 'block.txt'))){
-      await fs.writeFile(path.join(storage, 'block.txt'), JSON.stringify([]))
+      await fsp.writeFile(path.join(storage, 'block.txt'), JSON.stringify([]))
     }
     const blockList = block ? JSON.parse((await fs.readFile(path.join(storage, 'block.txt'))).toString('utf-8')) : null
   

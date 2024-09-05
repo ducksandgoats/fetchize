@@ -3,7 +3,7 @@ export default async function makeBTFetch (opts = {}) {
     const {default: mime} = await import('mime')
     const {default: parseRange} = await import('range-parser')
     const path = await import('path')
-    // const fs = await import('fs/promises')
+    const fsp = await import('fs/promises')
     const {Readable} = await import('stream')
     const fs = await import('fs-extra')
     const DEFAULT_OPTS = {timeout: 30000}
@@ -29,7 +29,7 @@ export default async function makeBTFetch (opts = {}) {
       await fs.ensureDir(dir)
     }
     if(!await fs.pathExists(path.join(dir, 'block.txt'))){
-      await fs.writeFile(path.join(dir, 'block.txt'), JSON.stringify([]))
+      await fsp.writeFile(path.join(dir, 'block.txt'), JSON.stringify([]))
     }
     const blockList = block ? JSON.parse((await fs.readFile(path.join(dir, 'block.txt'))).toString('utf-8')) : null
   
