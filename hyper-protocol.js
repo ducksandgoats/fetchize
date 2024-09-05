@@ -3,8 +3,8 @@ export default async function makeHyperFetch (opts = {}) {
     const {default: mime} = await import('mime')
     const {default: parseRange} = await import('range-parser')
     const { Readable, pipelinePromise } = await import('streamx')
-    const fs = await import('fs/promises')
-    // const fse = await import('fs-extra')
+    // const fs = await import('fs/promises')
+    const fs = await import('fs-extra')
     const path = await import('path')
     const DEFAULT_OPTS = {timeout: 30000}
     const finalOpts = { ...DEFAULT_OPTS, ...opts }
@@ -21,18 +21,11 @@ export default async function makeHyperFetch (opts = {}) {
       'Access-Control-Request-Headers': '*'
     }
 
-    async function pathExists(arg){
-      try {
-        await fs.access(arg)
-        return true
-      } catch (error) {
-        console.error(error)
-        return false
-      }
-    }
-
     const app = await (async (finalOpts) => {if(finalOpts.sdk){return finalOpts.sdk}else{const SDK = await import('hyper-sdk');const sdk = await SDK.create(finalOpts);return sdk;}})(finalOpts)
-    if(!await pathExists(path.join(storage, 'block.txt'))){
+    if(!await fs.pathExists(storage)){
+      await fs.ensureDir(storage)
+    }
+    if(!await fs.pathExists(path.join(storage, 'block.txt'))){
       await fs.writeFile(path.join(storage, 'block.txt'), JSON.stringify([]))
     }
     const blockList = block ? JSON.parse((await fs.readFile(path.join(storage, 'block.txt'))).toString('utf-8')) : null
