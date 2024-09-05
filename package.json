@@ -1,6 +1,6 @@
 {
   "name": "fetchize",
-  "version": "1.0.9",
+  "version": "2.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.2.0",
     "@derhuerst/gemini": "^2.0.0",
+    "@libp2p/circuit-relay-v2": "^1.1.5",
     "@libp2p/identify": "^2.1.5",
     "@libp2p/kad-dht": "^12.1.5",
     "blockstore-fs": "^2.0.0",
@@ -23,7 +24,6 @@
     "helia": "^4.2.5",
     "http-proxy-agent": "^7.0.2",
     "hyper-sdk": "^5.0.0",
-    "libp2p": "^1.9.3",
     "mime": "^4.0.4",
     "multiformats": "^13.2.2",
     "node-fetch": "^3.3.2",
