@@ -49,6 +49,5 @@ export default async function(fsPath, opts = {}){
         closer.push(closeTopic)
         obj.topic = topicHandler
     }
-    process.on('SIGINT', async () => {await Promise.all(closer)})
     return {obj, closer}
 }
