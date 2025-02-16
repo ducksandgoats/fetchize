@@ -123,7 +123,7 @@ export default async function makeBTFetch (opts = {}) {
     async function makeBt(str, session = null){
       // const session = new Request(url, opt)
       try {
-        const mainURL = new URL(str || session.url)
+        const mainURL = new URL(str.url || str)
         if(!session){
           session = str
         }

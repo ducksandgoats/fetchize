@@ -102,7 +102,7 @@ export default async function makeHyperFetch (opts = {}) {
     async function makeHyper(str, session = null){
       try {
       // const session = new Request(url, opt)
-      const mainURL = new URL(str || session.url)
+      const mainURL = new URL(str.url || str)
       if(!session){
         session = str
       }

@@ -59,6 +59,9 @@ export default async function makeTopicFetch (opts = {}) {
           if(!socket.ids.has(bufToStr)){
             socket.ids.add(bufToStr)
           }
+          if(!test.peers.has(peerKey)){
+            test.peers.add(peerKey)
+          }
         }
       }
       if(connection.has(pub)){
@@ -79,9 +82,9 @@ export default async function makeTopicFetch (opts = {}) {
         socket.on('close', handler)
         socket.funcs = true
         }
-        if(!line.has(peerKey, socket)){
-          line.set(peerKey, socket)
-        }
+      }
+      if(!line.has(peerKey, socket)){
+        line.set(peerKey, socket)
       }
     }
 
@@ -89,7 +92,7 @@ export default async function makeTopicFetch (opts = {}) {
 
     async function makeTopic(str, session = null){
       try {
-        const mainURL = new URL(str || session.url)
+        const mainURL = new URL(str.url || str)
         if(!session){
           session = str
         }
@@ -110,15 +113,42 @@ export default async function makeTopicFetch (opts = {}) {
             throw new Error('id is blocked')
         }
 
-      if(method === 'GET'){
+      if(method === 'HEAD'){
         const buf = Buffer.alloc(32).fill(mainURL.hostname)
         const str = buf.toString()
-        if(current.has(str)){
-          const test = current.get(str)
-          return new Response(test.events, {status: 200})
+        if(!current.has(str)){
+          iter(str, buf)
+        }
+        if(headers.has('x-user') && JSON.parse(headers.has('x-user'))){
+          const {peers} = current.has(str)
+          const arr = []
+          for(const i of peers){
+            arr.push(i)
+          }
+          const rand = arr[Math.floor(Math.random() * arr.length)]
+          if(rand){
+            return new Response(null, {status: 200, headers: {'X-ID': rand}})
+          } else {
+            return new Response(null, {status: 400})
+          }
         } else {
-          const test = iter(str, buf)
-          return new Response(test.events, {status: 200})
+          return new Response(null, {status: 200})
+        }
+      } else if(method === 'GET'){
+        const buf = Buffer.alloc(32).fill(mainURL.hostname)
+        const str = buf.toString()
+        if(!current.has(str)){
+          iter(str, buf)
+        }
+        const obj = current.get(mainURL.hostname)
+        if(headers.has('x-users') && JSON.parse(headers.has('x-users'))){
+          const arr = []
+          for(const i of obj.peers){
+            arr.push(i)
+          }
+          return new Response(JSON.stringify(arr), {status: 200})
+        } else {
+          return new Response(obj.events, {status: 200})
         }
       } else if(method === 'POST'){
         const id = headers.has('x-id') || search.has('x-id') ? headers.get('x-id') || search.get('x-id') : null
@@ -175,6 +205,7 @@ export default async function makeTopicFetch (opts = {}) {
     function iter(hostname, bufOFStr){
       const obj = {}
       obj.ids = new Set()
+      obj.peers = new Set()
       obj.events =  new EventIterator(({ push, fail, stop }) => {
           obj.push = push
           obj.fail = fail

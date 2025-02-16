@@ -119,7 +119,7 @@ export default async function makeIPFSFetch (opts = {}) {
     async function makeIpfs(str, session = null){
       try {
       // const session = new Request(url, opt)
-      const mainURL = new URL(str || session.url)
+      const mainURL = new URL(str.url || str)
       if(!session){
         session = str
       }
