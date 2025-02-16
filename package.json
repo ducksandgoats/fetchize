@@ -1,6 +1,6 @@
 {
   "name": "fetchize",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -26,6 +26,6 @@
     "multiformats": "^13.3.1",
     "range-parser": "^1.2.1",
     "streamx": "^2.22.0",
-    "torrentz": "^18.0.8"
+    "torrentz": "^19.0.0"
   }
 }

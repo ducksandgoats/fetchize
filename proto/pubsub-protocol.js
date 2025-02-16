@@ -47,7 +47,7 @@ export default async function makePubsubFetch (opts = {}) {
         }
       const body = session.body
       const method = session.method
-      const headers = session.headers
+      const headers = new Headers(session.headers)
       const search = mainURL.searchParams
 
       if(mainURL.pathname !== '/'){

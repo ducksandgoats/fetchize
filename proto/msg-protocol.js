@@ -45,7 +45,7 @@ export default async function makeMsgFetch (opts = {}) {
         }
         const body = session.body
         const method = session.method
-        const useHeaders = session.headers
+        const useHeaders = new Headers(session.headers)
         const useSearch = mainURL.searchParams
   
         if(mainURL.pathname !== '/'){
