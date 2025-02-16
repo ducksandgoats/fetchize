@@ -119,7 +119,7 @@ export default async function makeTopicFetch (opts = {}) {
         if(!current.has(str)){
           iter(str, buf)
         }
-        if(headers.has('x-user') && JSON.parse(headers.has('x-user'))){
+        if(headers.has('x-iden') && JSON.parse(headers.get('x-iden'))){
           const {peers} = current.has(str)
           const arr = []
           for(const i of peers){
@@ -141,7 +141,7 @@ export default async function makeTopicFetch (opts = {}) {
           iter(str, buf)
         }
         const obj = current.get(mainURL.hostname)
-        if(headers.has('x-users') && JSON.parse(headers.has('x-users'))){
+        if(headers.has('x-iden') && JSON.parse(headers.get('x-iden'))){
           const arr = []
           for(const i of obj.peers){
             arr.push(i)

@@ -88,7 +88,7 @@ export default async function makeMsgFetch (opts = {}) {
             })
           }
           const {torrent} = current.get(mainURL.hostname)
-          if(useHeaders.has('x-user') && JSON.parse(useHeaders.has('x-user'))){
+          if(useHeaders.has('x-iden') && JSON.parse(useHeaders.get('x-iden'))){
             const arr = torrent.allUsers()
             const rand = arr[Math.floor(Math.random() * arr.length)]
             if(rand){
@@ -130,13 +130,13 @@ export default async function makeMsgFetch (opts = {}) {
               })
             }
             const obj = current.get(mainURL.hostname)
-            if(useHeaders.has('x-users') && JSON.parse(useHeaders.get('x-users'))){
+            if(useHeaders.has('x-iden') && JSON.parse(useHeaders.get('x-iden'))){
               return new Response(JSON.stringify(obj.torrent.allUsers()), {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
             } else {
               return new Response(obj.events, {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
             }
         } else if(method === 'POST'){
-          const id = useHeaders.has('x-id') || useSearch.has('x-id') ? huseHaders.get('x-id') || useSearch.get('x-id') : null
+          const id = useHeaders.has('x-id') || useSearch.has('x-id') ? useHeaders.get('x-id') || useSearch.get('x-id') : null
           if(!current.has(mainURL.hostname)){
             const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
             const obj = {}
