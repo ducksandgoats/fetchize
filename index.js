@@ -4,7 +4,7 @@ import fs from 'fs'
 export default async function(fsPath, opts = {}){
     fsPath = fsPath || path.join(import.meta.dirname, 'data')
     if(!fs.existsSync(fsPath)){
-        fs.mkdir(fsPath, {recursive: true})
+        fs.mkdirSync(fsPath, {recursive: true})
     }
     const obj = {}
     const closer = []
