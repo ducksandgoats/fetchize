@@ -130,7 +130,7 @@ export default async function makeMsgFetch (opts = {}) {
               })
             }
             const obj = current.get(mainURL.hostname)
-            if(useHeaders.has('x-users')){
+            if(useHeaders.has('x-users') && JSON.parse(useHeaders.get('x-users'))){
               return new Response(JSON.stringify(obj.torrent.allUsers()), {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
             } else {
               return new Response(obj.events, {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
