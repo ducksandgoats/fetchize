@@ -136,7 +136,7 @@ export default async function makeMsgFetch (opts = {}) {
               return new Response(obj.events, {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
             }
         } else if(method === 'POST'){
-          const id = headers.has('x-id') || search.has('x-id') ? headers.get('x-id') || search.get('x-id') : null
+          const id = useHeaders.has('x-id') || useSearch.has('x-id') ? huseHaders.get('x-id') || useSearch.get('x-id') : null
           if(!current.has(mainURL.hostname)){
             const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
             const obj = {}
