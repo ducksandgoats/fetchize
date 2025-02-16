@@ -197,7 +197,7 @@ export default async function makeTopicFetch (opts = {}) {
         return new Response('invalid method', {status: 400, headers: mainHeaders})
       }
       } catch (error) {
-        console.error(error)
+        // console.error(error)
         return new Response(intoStream(error.stack), {status: 500, headers: mainHeaders})
       }
     }
