@@ -45,7 +45,7 @@ export default async function(fsPath, opts = {}){
     }
     if(opts.topic){
         const {default: createTopicHandler} = await import('./proto/topic-protocol.js')
-        const { handler: topicHandler, close: closeTopic } = await createTopicHandler({...appOpts.hyper, sdk}, session)
+        const { handler: topicHandler, close: closeTopic } = await createTopicHandler({...appOpts.hyper, sdk})
         closer.push(closeTopic)
         obj.topic = topicHandler
     }
