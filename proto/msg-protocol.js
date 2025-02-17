@@ -59,36 +59,7 @@ export default async function makeMsgFetch (opts = {}) {
             throw new Error('id is blocked')
         }
         if(method === 'HEAD'){
-          if(!current.has(mainURL.hostname)){
-            const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
-            const obj = {}
-            current.set(mainURL.hostname, obj)
-            obj.torrent = torrent
-            obj.events = new EventIterator(({ push, fail, stop }) => {
-              obj.push = push
-              obj.fail = fail
-              obj.stop = stop
-              function handle () {
-                  // torrent.off('msg', push)
-                  // torrent.off('over', handle)
-                  // current.delete(mainURL.hostname)
-                  stop()
-              }
-              torrent.on('msg', push)
-              torrent.on('over', handle)
-              // obj.func = () => {
-              //   torrent.off('msg', push)
-              //   torrent.off('over', handle)
-              // }
-              return () => {
-                  torrent.off('msg', push)
-                  torrent.off('over', handle)
-                  current.delete(mainURL.hostname)
-                  // stop()
-              }
-            })
-          }
-          const {torrent} = current.get(mainURL.hostname)
+          const {torrent} = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : await iter(mainURL, useHeaders)
           if(useHeaders.has('x-iden') && JSON.parse(useHeaders.get('x-iden'))){
             const arr = torrent.allUsers()
             const rand = arr[Math.floor(Math.random() * arr.length)]
@@ -101,36 +72,7 @@ export default async function makeMsgFetch (opts = {}) {
             return new Response(null, {status: 200, headers: {'X-Hash': torrent.infoHash}})
           }
         } else if(method === 'GET'){
-            if(!current.has(mainURL.hostname)){
-              const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
-              const obj = {}
-              current.set(mainURL.hostname, obj)
-              obj.torrent = torrent
-              obj.events = new EventIterator(({ push, fail, stop }) => {
-                obj.push = push
-                obj.fail = fail
-                obj.stop = stop
-                function handle () {
-                    // torrent.off('msg', push)
-                    // torrent.off('over', handle)
-                    // current.delete(mainURL.hostname)
-                    stop()
-                }
-                torrent.on('msg', push)
-                torrent.on('over', handle)
-                // obj.func = () => {
-                //   torrent.off('msg', push)
-                //   torrent.off('over', handle)
-                // }
-                return () => {
-                    torrent.off('msg', push)
-                    torrent.off('over', handle)
-                    current.delete(mainURL.hostname)
-                    // stop()
-                }
-              })
-            }
-            const obj = current.get(mainURL.hostname)
+            const obj = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : await iter(mainURL, useHeaders)
             if(useHeaders.has('x-iden') && JSON.parse(useHeaders.get('x-iden'))){
               return new Response(JSON.stringify(obj.torrent.allUsers()), {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
             } else {
@@ -138,50 +80,16 @@ export default async function makeMsgFetch (opts = {}) {
             }
         } else if(method === 'POST'){
           const id = useHeaders.has('x-id') || useSearch.has('x-id') ? useHeaders.get('x-id') || useSearch.get('x-id') : null
-          if(!current.has(mainURL.hostname)){
-            const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
-            const obj = {}
-            current.set(mainURL.hostname, obj)
-            obj.torrent = torrent
-            obj.events = new EventIterator(({ push, fail, stop }) => {
-              obj.push = push
-              obj.fail = fail
-              obj.stop = stop
-              function handle () {
-                  // torrent.off('msg', push)
-                  // torrent.off('over', handle)
-                  // current.delete(mainURL.hostname)
-                  stop()
-              }
-              torrent.on('msg', push)
-              torrent.on('over', handle)
-              // obj.func = () => {
-              //   torrent.off('msg', push)
-              //   torrent.off('over', handle)
-              // }
-              return () => {
-                  torrent.off('msg', push)
-                  torrent.off('over', handle)
-                  current.delete(mainURL.hostname)
-                  // stop()
-              }
-            })
-          }
-          const obj = current.get(mainURL.hostname)
-          obj.torrent.say(await toBody(body, useHeaders.has('x-bin') ? JSON.parse(useHeaders.get('x-bin')) : null), id)
-          return new Response(null, {status: 200, headers: {'X-Hash': obj.torrent.infoHash}})
+          const {torrent} = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : await iter(mainURL, useHeaders)
+          torrent.say(await toBody(body, useHeaders.has('x-bin') ? JSON.parse(useHeaders.get('x-bin')) : null), id)
+          return new Response(null, {status: 200, headers: {'X-Hash': torrent.infoHash}})
         } else if(method === 'DELETE'){
           if(current.has(mainURL.hostname)){
             const obj = current.get(mainURL.hostname)
             // const hash = obj.torrent.infoHash
             obj.stop()
             current.delete(mainURL.hostname)
-            let test
-            if(useHeaders.has('x-shred') && JSON.parse(useHeaders.get('x-shred'))){
-              test = await app.shredTorrent(mainURL.hostname, mainURL.pathname, {buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
-            } else {
-              test = mainURL.hostname
-            }
+            const test = useHeaders.has('x-shred') && JSON.parse(useHeaders.get('x-shred')) ? await app.shredTorrent(mainURL.hostname, mainURL.pathname, {buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false}) : mainURL.hostname
             return new Response(test, {status: 200, headers: {'X-Hash': hash}})
           } else {
             // const test = await app.shredTorrent({msg: mainURL.hostname}, mainURL.pathname, {})
@@ -196,6 +104,37 @@ export default async function makeMsgFetch (opts = {}) {
         }
         return new Response(intoStream(error.stack), {status: 500, headers: mainHeaders})
       }
+    }
+
+    async function iter(mainURL, useHeaders){
+      const {torrent} = await app.loadTorrent(mainURL.hostname, mainURL.pathname, {torrent: true, buf: useHeaders.has('x-buf') ? JSON.parse(useHeaders.get('x-buf')) : false})
+      const obj = {}
+      obj.torrent = torrent
+      obj.events = new EventIterator(({ push, fail, stop }) => {
+        obj.push = push
+        obj.fail = fail
+        obj.stop = stop
+        function handle () {
+            // torrent.off('msg', push)
+            // torrent.off('over', handle)
+            // current.delete(mainURL.hostname)
+            stop()
+        }
+        torrent.on('msg', push)
+        torrent.on('over', handle)
+        // obj.func = () => {
+        //   torrent.off('msg', push)
+        //   torrent.off('over', handle)
+        // }
+        return () => {
+            torrent.off('msg', push)
+            torrent.off('over', handle)
+            current.delete(mainURL.hostname)
+            // stop()
+        }
+      })
+      current.set(mainURL.hostname, obj)
+      return obj
     }
 
     async function toBody(body, buf){
