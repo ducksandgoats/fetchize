@@ -161,7 +161,7 @@ export default async function makePubsubFetch (opts = {}) {
               obj.room.sendTo(id, await toStr(body))
               // await app.libp2p.services.pubsub.publish(mainURL.hostname, new TextEncoder().encode(await toStr(body)))
             } else {
-              obj.room.broadcast(await toStr(body))
+              await obj.room.broadcast(await toStr(body))
               // await app.libp2p.services.pubsub.publish(mainURL.hostname, new TextEncoder().encode(await toStr(body)))
             }
             return new Response(null, {status: 200})
