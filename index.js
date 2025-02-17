@@ -27,7 +27,7 @@ export default async function(fsPath, opts = {}){
     }
     if(opts.hyper){
         const {default: createHyperHandler} = await import('./proto/hyper-protocol.js')
-        const { handler: hyperHandler, close: closeHyper } = await createHyperHandler({...hyper, sdk})
+        const { handler: hyperHandler, close: closeHyper } = await createHyperHandler({...appOpts.hyper, sdk})
         closer.push(closeHyper)
         obj.hyper = hyperHandler
     }
@@ -39,13 +39,13 @@ export default async function(fsPath, opts = {}){
     }
     if(opts.pubsub){
         const {default: createPubsubHandler} = await import('./proto/pubsub-protocol.js')
-        const { handler: pubsubHandler, close: closePubsub } = await createPubsubHandler({...ipfs, helia})
+        const { handler: pubsubHandler, close: closePubsub } = await createPubsubHandler({...appOpts.ipfs, helia})
         closer.push(closePubsub)
         obj.pubsub = pubsubHandler
     }
     if(opts.topic){
         const {default: createTopicHandler} = await import('./proto/topic-protocol.js')
-        const { handler: topicHandler, close: closeTopic } = await createTopicHandler({...hyper, sdk}, session)
+        const { handler: topicHandler, close: closeTopic } = await createTopicHandler({...appOpts.hyper, sdk}, session)
         closer.push(closeTopic)
         obj.topic = topicHandler
     }
