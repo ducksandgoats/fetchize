@@ -117,11 +117,9 @@ export default async function makeTopicFetch (opts = {}) {
       if(method === 'HEAD'){
         const buf = Buffer.alloc(32).fill(mainURL.hostname)
         const str = buf.toString()
-        if(!current.has(str)){
-          iter(str, buf)
-        }
+        const obj = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : iter(str, buf)
         if(headers.has('x-iden') && JSON.parse(headers.get('x-iden'))){
-          const {peers} = current.has(str)
+          const {peers} = obj
           const arr = []
           for(const i of peers){
             arr.push(i)
@@ -138,10 +136,7 @@ export default async function makeTopicFetch (opts = {}) {
       } else if(method === 'GET'){
         const buf = Buffer.alloc(32).fill(mainURL.hostname)
         const str = buf.toString()
-        if(!current.has(str)){
-          iter(str, buf)
-        }
-        const obj = current.get(mainURL.hostname)
+        const obj = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : iter(str, buf)
         if(headers.has('x-iden') && JSON.parse(headers.get('x-iden'))){
           const arr = []
           for(const i of obj.peers){
@@ -155,44 +150,27 @@ export default async function makeTopicFetch (opts = {}) {
         const id = headers.has('x-id') || search.has('x-id') ? headers.get('x-id') || search.get('x-id') : null
         const buf = Buffer.alloc(32).fill(mainURL.hostname)
         const str = buf.toString()
-        if(current.has(str)){
-          if(id){
-            if(line.has(id)){
-              line.get(id).write(await toBuff(body))
-            }
-          } else {
-            const test = current.get(str)
-            for(const prop of test.ids){
-              if(connection.has(prop)){
-                connection.get(prop).write(await toBuff(body))
-              }
+        const obj = current.has(mainURL.hostname) ? current.get(mainURL.hostname) : iter(str, buf)
+        if(id){
+          if(line.has(id)){
+            line.get(id).write(await toBuff(body))
+          }
+        } else {
+          for(const prop of obj.ids){
+            if(connection.has(prop)){
+              connection.get(prop).write(await toBuff(body))
             }
           }
-          return new Response(null, {status: 200})
-        } else {
-            const test = iter(str, buf)
-            if(id){
-              if(line.has(id)){
-                line.get(id).write(await toBuff(body))
-              }
-            } else {
-              for(const prop of test.ids){
-                if(connection.has(prop)){
-                  connection.get(prop).write(await toBuff(body))
-                }
-              }
-            }
-            return new Response(null, {status: 200})
         }
+        return new Response(null, {status: 200})
       } else if(method === 'DELETE'){
-        const str = Buffer.alloc(32).fill(mainURL.hostname).toString()
-        if(current.has(str)){
-          const test = current.get(str)
+        if(current.has(mainURL.hostname)){
+          const test = current.get(mainURL.hostname)
           test.stop()
-          current.delete(str)
-          return new Response(str, {status: 200})
+          current.delete(mainURL.hostname)
+          return new Response(mainURL.hostname, {status: 200})
         } else {
-          return new Response(str, {status: 400})
+          return new Response(mainURL.hostname, {status: 400})
         }
       } else {
         return new Response('invalid method', {status: 400, headers: mainHeaders})
